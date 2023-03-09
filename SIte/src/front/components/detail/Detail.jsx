@@ -24,7 +24,6 @@ const Detail = () => {
     const [deskripsi, setDeskripsi] = useState("");
     const [gambar, setGambar] = useState("");
     const [harga_penawaran,setHarga] = useState();
-    const [penawar, setNamaPenawar] = useState([]);
     const [lelangId,setlelangId] = useState("");
     const [hargaTinggi, setHargaraTinggi] = useState("");
     const [total,setTotal] = useState();
@@ -32,6 +31,7 @@ const Detail = () => {
     const [img,setImg] = useState([]);
     const [msg, setMsg] = useState("");
     const navigate = useNavigate();
+    const [slide, setSlide] = useState(img[0]);
     const {id} = useParams();
     useEffect(() => {
         const getLelangById = async () => {
@@ -54,19 +54,13 @@ const Detail = () => {
         };
         getLelangById();
       }, [id]);
-      useEffect(() => {
-        getPenawaran();
-      }, [id]);
+      
       useEffect(() => {
         if(barangId != ""){
           getGambar();
         }
       }, [barangId]);
-    const getPenawaran = async () => {
-      const response = await axios.get(`http://localhost:5000/penawaran/${id}`);
-
-      setNamaPenawar(response.data);
-    };
+    
     useEffect(() => {
       const getLelang = async () => {
         try {
@@ -100,6 +94,10 @@ const Detail = () => {
         }
       }
     };
+    const handleClik = (index) => {
+      const slider = img[index];
+      setSlide(slider.url);
+    }
   return (
   <>
   
@@ -123,13 +121,14 @@ const Detail = () => {
           <div className="image-vertical-scroller">
             
             <div className="d-flex flex-column">
-            {img?.map((img, i) => {     
+            {img?.map((img, i) => {    
                 let selected = i !== 1 ? "opacity-6" : "";
                 return (
                   <a key={i} href="#">
                     <img
                       className={"rounded mb-2 ratio " + selected}
                       alt=""
+                      onClick={()=>handleClik(i)}
                       src={img.url}
                     />
                   </a>
@@ -141,11 +140,20 @@ const Detail = () => {
         <div className="col-lg-6">
           <div className="row">
             <div className="col-12 mb-4">
+              {!slide && (
               <img
                 className="border rounded ratio ratio-1x1"
                 alt=""
                 src={gambar}
               />
+              )} 
+              {slide && (
+              <img
+                className="border rounded ratio ratio-1x1"
+                alt=""
+                src={slide}
+              />
+              )}
             </div>
           </div>
         </div>
